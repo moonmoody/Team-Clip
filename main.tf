@@ -65,3 +65,5 @@ resource "aws_nat_gateway" "tf_nat_gw" {
     Name = "${var.pjt_name}_nat_gw"
   }
 }
+
+// 수정 연습 !!!
