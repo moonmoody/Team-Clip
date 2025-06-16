@@ -67,3 +67,5 @@ resource "aws_nat_gateway" "tf_nat_gw" {
 }
 
 // 수정 연습 !!!
+
+// 수정 test 2222 -dck-
