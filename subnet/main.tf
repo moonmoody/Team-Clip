@@ -22,6 +22,13 @@ locals {
   depends_on = [aws_subnet.tf_sn]
 }
 
+locals {
+  subnetId2 = [
+    for item in aws_subnet.tf_sn : item.id
+  ]
+  depends_on2 = [aws_subnet.tf_sn]
+}
+
 
 resource "aws_subnet" "tf_sn" {
   # for_each = {
@@ -38,3 +45,4 @@ resource "aws_subnet" "tf_sn" {
     Name = "${var.pjtName}_sn_${each.key}"
   }
 }
+
