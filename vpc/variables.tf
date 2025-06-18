@@ -10,3 +10,7 @@ variable "region" {
 variable "vpcCidr" {
   type        = string
 }
+
+variable "vpcCidr2" {
+  type        = string
+}
