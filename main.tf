@@ -52,6 +52,3 @@ module "lb" {
   instanceId = module.ec2.instanceId
 
 }
-
-
-
