@@ -5,46 +5,59 @@ name: 'TerraformCITest'
 # 이벤트 리스너
 on:
   push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+    branches: [ "main" ]  # main 브랜치에 코드를 push하면 작동하기.
+  pull_request:           
+    branches: [ "main" ]  # main 브랜치에 pull_request 실행
 
+# workflow의 권한 설정.
 permissions:
   contents: read
 
 
-# 작업 목록 (Class 개념) 
+# 인터프리터 방식으로 실행(순차적 실행)
+# 작업 목록 (Class 개념)
+# 앞에 있는 steps이 실패하면 job은 실행을 중단. (뒤에 있는 steps은 실행이 안됌) 
 jobs:
   test:
-    name: 'Terraform'
-    runs-on: ubuntu-latest
-    environment: production
+    name: 'Terraform'         # jobs 이름
+    runs-on: ubuntu-latest    # 우분투 리눅스의 최신판 환경으로 실행
+    environment: production   # 이 작업이 production 환경과 관련 있음을 명시(?)
 
-    # Bash를 이용해서 실행 할 것.
+    # 모든 run 명령어가 bash 셀을 통해 실행되도록 설정.
+		# Windows, macOS, Linux 등 어떤 러너 환견에서든 일관된 스크립트 실행을 보장.
     defaults:
       run:
         shell: bash
-        
-    # 작업 세부 내용 (Method 개념)
+    
+    # 코드 체크아웃', 'AWS 인증', '테스트 실행'처럼 하나의 구체적인 작업을 수행. (Method / Function 개념)
+		# run -> 명령어 직접 실행
+		# uses -> 미리 만들어진 기능 호출
     steps:
     - name: Checkout
-      uses: actions/checkout@v4
+      uses: actions/checkout@v4  # 세부 작동 내용. (~을 해라) # action 가져오기 
 
     - name: Setup Terraform
       uses: hashicorp/setup-terraform@v1
+      # GitHub 저장소의 Settings > Secrets and variables > Actions에 TF_API_TOKEN이라는     
+      # 이름으로 저장된 비밀 값을 가져와 Terraform Cloud 인증 토큰으로 사용하겠다는 의미. 
       with:
         cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
-        
+      
+      # Terraform init 명령 실행    
     # - name: Terraform Init
     #   run: terraform init
 
+      # Terraform fmt 명령 실행
     - name: Terraform Format
       run: terraform fmt -check
 
+      # Terraform plan 명령 실행  
     # - name: Terraform Plan
     #   run: terraform plan -input=false
 
+			# plan에서 생성된 계획을 실제 인프라에 적용.
     # - name: Terraform Apply
+        # Pull Request에서는 이 단계가 실행 되지 않도록하는 조건문.
     #   if: github.ref == 'refs/heads/"main"' && github.event_name == 'push'
     #   run: terraform apply -auto-approve -input=false
       
